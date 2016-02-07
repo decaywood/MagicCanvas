@@ -1,0 +1,21 @@
+{
+  "name": "magic-canvas",
+  "title": "magic-canvas",
+  "author": "decaywood <decaywood@qq.com>",
+  "version": "1.0.0",
+  "homepage": "http://decaywood.github.io",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/decaywood/decaywood.github.io"
+  },
+  "bugs": "https://github.com/decaywood/decaywood.github.io/issues",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-banner": "~0.2.3",
+    "grunt-contrib-concat": "~0.5.1",
+    "grunt-contrib-less": "~0.11.4",
+    "grunt-contrib-uglify": "~0.5.1",
+    "grunt-contrib-watch": "~0.6.1"
+  }
+}
