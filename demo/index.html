@@ -3,25 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Magic Canvas</title>
-    <link rel="stylesheet" href="./style-sheet.css?v=0.2">
+    <style>
+        body {
+            background: url("./bg.jpg") no-repeat;
+            background-size: cover;
+            min-height: 960px;
+        }
+
+        h1,h2 {
+            left:80%;
+            color: white;
+            position: fixed;
+        }
+    </style>
 </head>
 <body>
 <h1>Magic Canvas<br/></h1>
 <h2><br/><br/>by decaywood </h2>
 <canvas id="reactive-bg-canvas"></canvas>
-<iframe src="https://ghbtns.com/github-btn.html?user=decaywood&repo=MagicCanvas&type=star&count=true&size=middle" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
 </body>
 <script></script>
 <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
-<script src="../magic-canvas.min.js?v=0.2"></script>
+<script src="../magic-canvas.min.js"></script>
 <script>
-    $.magicCanvas.draw({
-        lineLen : 30,
-        heartBeatCD : 3000,
-        heartBeatRange : 300,
-        rgb : function (pos, center) {
-            return {r:156,g:217,b:249};
-        } // also can be a object
-    })
+    window.onload = function () {
+        $.magicCanvas.draw({
+            lineLen: 18,
+            heartBeatCD: 3000,
+            heartBeatRange: 300,
+            rgb: function (pos, center) {
+                return {r: 156, g: 217, b: 249};
+            } // also can be a object
+        })
+    };
 </script>
 </html>
