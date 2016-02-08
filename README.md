@@ -1,4 +1,4 @@
-#[demo](http://7xqo9j.com1.z0.glb.clouddn.com/MagicCanvas%2Findex.html?v=999)
+#[demo](http://7xqo9j.com1.z0.glb.clouddn.com/MagicCanvas%2Findex.html)
 
 # Dependencies
 -
@@ -8,6 +8,19 @@ magic canvas depends on jQuery. Include them both in end of your HTML code:
 <script src="jquery.js" type="text/javascript"></script>
 <script src="magic-canvas.js" type="text/javascript"></script>
 ```
+
+# Something you should know
+
+the effect needs considerable performance. originally, it's running only on the browsers that requestAnimationFrame is built in. with [polyfill](https://remysharp.com/2010/10/08/what-is-a-polyfill), the early browser could work as well, but the best choice is update the browser to the latest version rather than use fall-back requestAnimationFrame.
+
+**browser supporting requestAnimationFrame**:
+
+* chrome 31+
+* firefox 26+
+* IE 10+
+* opera 19+
+* safari 6+
+
 
 # Use like so:
 
