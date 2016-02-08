@@ -1,15 +1,23 @@
 jQuery.magicCanvas = {
-    draw:function(opt) {
+    draw: function (opt) {
 
-        polyfill();
+        polyFill();
 
-        var width, height, canvas, ctx, points, target, draw = true, intersections = [];
+        var width,
+            height,
+            canvas,
+            ctx,
+            points,
+            target,
+            draw = true,
+            intersections = [],
+            $canvas = $("#reactive-bg-canvas");
 
         var defaults = {
-            lineLen : 30,
-            heartBeatCD : 3000,
-            heartBeatRange : 300,
-            rgb : {r:156,g:217,b:249}
+            lineLen: 30,
+            heartBeatCD: 3000,
+            heartBeatRange: 300,
+            rgb: {r: 156, g: 217, b: 249}
         };
 
         var options = $.extend(defaults, opt);
@@ -68,6 +76,7 @@ jQuery.magicCanvas = {
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
+            initMap();
         }
 
         // animation
@@ -80,14 +89,13 @@ jQuery.magicCanvas = {
             ctx.clearRect(0, 0, width, height);
             for (var i = 0; i < intersections.length; i++) {
                 var intersection = intersections[i];
-                if(intersection.circle.active > 0) {
+                if (intersection.circle.active > 0) {
                     intersection.circle.active -= 0.012;
                     intersection.circle.draw();
                 }
             }
             requestAnimationFrame(animate);
         }
-
 
 
         function heartBeat() {
@@ -98,14 +106,14 @@ jQuery.magicCanvas = {
             var step = options.heartBeatRange / _frames;
             var sleep = activeTime / _frames;
             var originOpacity = 0.8;
-            var centerP = {x: target.x, y: target.y};
+            var centerP = getRelativeP();
             intersections = [];
 
             var f = function () {
-                if(srcCircle.radius < options.heartBeatRange) {
-                    for(var i = 0; i < points.length; i++) {
+                if (srcCircle.radius < options.heartBeatRange) {
+                    for (var i = 0; i < points.length; i++) {
                         var curP = points[i];
-                        if(getDistance(curP, srcCircle.pos) < Math.pow(srcCircle.radius, 2)) {
+                        if (getDistance(curP, srcCircle.pos) < Math.pow(srcCircle.radius, 2)) {
                             for (var j = 0; j < curP.closest.length; j++) {
                                 var clsP = curP.closest[j];
                                 var intersection = getIntersection(curP, clsP, srcCircle);
@@ -122,20 +130,19 @@ jQuery.magicCanvas = {
                     srcCircle.radius += step;
                 }
             };
-            if(draw) f();
+            if (draw) f();
         }
 
         function findClosest() {
             var closestP = {x: -100, y: -100};
+            var rp = getRelativeP();
             for (var i = 0; i < points.length; i++) {
                 var curP = points[i];
-                closestP = getDistance(target, curP) < getDistance(target, closestP) ?
+                closestP = getDistance(rp, curP) < getDistance(rp, closestP) ?
                     curP : closestP;
             }
             return closestP;
         }
-
-
 
 
         function getNeighborPoint(p, type) {
@@ -160,14 +167,13 @@ jQuery.magicCanvas = {
         }
 
 
-
         // equation
         function getIntersection(p1, p2, circle) {
             var d1 = getDistance(p1, circle.pos);
             var d2 = getDistance(p2, circle.pos);
             var maxDis = Math.sqrt(Math.max(d1, d2));
             var minDis = Math.sqrt(Math.min(d1, d2));
-            if(minDis < circle.radius && maxDis > circle.radius) {
+            if (minDis < circle.radius && maxDis > circle.radius) {
                 var k = (p1.y - p2.y) / (p1.x - p2.x);
                 var b = p1.y - k * p1.x;
                 var c = -circle.pos.x;
@@ -276,25 +282,33 @@ jQuery.magicCanvas = {
             }
         }
 
-        function polyfill() {
+        function getRelativeP() {
+            var x = target.x - $canvas.offset().left;
+            var y = target.y - $canvas.offset().top;
+            return {x: x, y: y}
+        }
+
+        function polyFill() {
             var lastTime = 0;
             var vendors = ['ms', 'moz', 'webkit', 'o'];
             for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
                 window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
                 window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
             }
-            if (!window.requestAnimationFrame) window.requestAnimationFrame = function(callback, element) {
+            if (!window.requestAnimationFrame) window.requestAnimationFrame = function (callback, element) {
                 var currTime = new Date().getTime();
                 var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-                var id = window.setTimeout(function() {
+                var id = window.setTimeout(function () {
                     callback(currTime + timeToCall);
                 }, timeToCall);
                 lastTime = currTime + timeToCall;
                 return id;
             };
-            if (!window.cancelAnimationFrame) window.cancelAnimationFrame = function(id) {
+            if (!window.cancelAnimationFrame) window.cancelAnimationFrame = function (id) {
                 clearTimeout(id);
             };
         }
     }
+
+
 };
