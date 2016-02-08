@@ -1,4 +1,11 @@
 body {
     background-size: 100%;
-    background: url("bg.jpg") no-repeat;
+    background: url("./bg.jpg") no-repeat;
+    background-size: 100%;
+}
+
+h1,h2 {
+    left:80%;
+    color: white;
+    position: fixed;
 }

@@ -32,6 +32,9 @@ jQuery.magicCanvas = {
             width = $(window).width();
             height = $(window).height();
             canvas.style.position = "fixed";
+            canvas.style.zIndex = -99999;
+            canvas.style.top = '0px';
+            canvas.style.left = '0px';
 
             canvas.width = width;
             canvas.height = height;
