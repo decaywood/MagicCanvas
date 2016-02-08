@@ -11,4 +11,14 @@
 <script></script>
 <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
 <script src="../magic-canvas.min.js"></script>
+<script>
+    $.magicCanvas.draw({
+        lineLen : 30,
+        heartBeatCD : 3000,
+        heartBeatRange : 300,
+        rgb : function (pos, center) {
+            return {r:100,g:parseInt(pos.y) % 255,b:parseInt(pos.x) % 255};
+        } // also can be a function
+    })
+</script>
 </html>
