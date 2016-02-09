@@ -1,10 +1,12 @@
-#[demo](http://7xqo9j.com1.z0.glb.clouddn.com/MagicCanvas%2Findex.html?v=0.1-beta)
+#[demo](http://7xqo9j.com1.z0.glb.clouddn.com/MagicCanvas%2Findex.html?v=0.2-beta)
 
 # Dependencies
 -
-magic canvas depends on jQuery. Include them both in end of your HTML code:
+magic canvas depends on jQuery. Include them both in end of your HTML code (TweenLite.min.js is optional ,if you use random-move effect, it should be added):
 
 ```html
+<!-- TweenLite.min.js is optional -->
+<script src="TweenLite.min.js"></script>
 <script src="jquery.js" type="text/javascript"></script>
 <script src="magic-canvas.js" type="text/javascript"></script>
 ```
@@ -23,6 +25,8 @@ the effect needs considerable performance. originally, it's running only on the 
 
 
 # Use like so:
+
+demo1: heart-beat effect
 
 ```javascript
  $.magicCanvas.draw({
@@ -46,6 +50,20 @@ the effect needs considerable performance. originally, it's running only on the 
     })
 ```
 
+demo2: random-move
 
+```javascript
+ $.magicCanvas.draw({
+            type:"random-move",
+            rgb : function (circlePos) {
+                var px = circlePos.x; // point position
+                var py = circlePos.y;
+                // do some computation....
+                return {r:parseInt(px % 255),g:parseInt(py % 255),b:203};
+            }
+        })
+```
+
+you can click the link on the top of the page to see the demo.
 
 # LICENSE <a href="https://github.com/decaywood/MagicCanvas/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg?style=flat"></a>
