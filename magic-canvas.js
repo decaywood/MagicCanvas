@@ -93,6 +93,7 @@ jQuery.magicCanvas = {
             canvas.width = width;
             canvas.height = height;
             initMap();
+            initAnimation();
         }
 
         // animation
@@ -255,13 +256,13 @@ jQuery.magicCanvas = {
 
             this.pos = pos || null;
             this.radius = rad || null;
-            this.centerP = centerP || pos;
+            this.centerP = centerP;
 
             this.draw = function () {
                 if (!this.active) return;
                 ctx.beginPath();
                 ctx.arc(this.pos.x, this.pos.y, this.radius, 0, 2 * Math.PI, false);
-                var rgbRes = typeof options.rgb == "function" ? options.rgb(pos, centerP) : options.rgb;
+                var rgbRes = typeof options.rgb == "function" ? options.rgb(this.pos, this.centerP || this.pos) : options.rgb;
                 rgbRes = "".concat(rgbRes.r).concat(",").concat(rgbRes.g).concat(",").concat(rgbRes.b);
                 ctx.fillStyle = "rgba(" + rgbRes + "," + this.active + ")";
                 ctx.fill();
@@ -276,7 +277,7 @@ jQuery.magicCanvas = {
                 ctx.beginPath();
                 ctx.moveTo(p.x, p.y);
                 ctx.lineTo(p.closest[i].x, p.closest[i].y);
-                var rgbRes = typeof options.rgb == "function" ? options.rgb(p, p) : options.rgb;
+                var rgbRes = typeof options.rgb == "function" ? options.rgb(target) : options.rgb;
                 rgbRes = "".concat(rgbRes.r).concat(",").concat(rgbRes.g).concat(",").concat(rgbRes.b);
                 ctx.strokeStyle = "rgba(" + rgbRes + "," + p.active + ")";
                 ctx.stroke();
@@ -335,7 +336,7 @@ jQuery.magicCanvas = {
 
                 // assign a circle to each point
                 for (var i = 0; i < points.length; i++) {
-                    points[i].circle = new Circle(points[i], 2 + Math.random() * 2, "rgba(255,255,255,0.3)");
+                    points[i].circle = new Circle(points[i], 2 + Math.random() * 2, undefined);
                 }
 
             } else if (options.type == "heart-beat") {

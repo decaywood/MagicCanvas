@@ -48,21 +48,31 @@
             heartBeatCD: 3000,
             heartBeatRange: 300,
             type:"heart-beat",
-            rgb: function (pos, center) {
-                return {r: 156, g: 217, b: 249};
-            } // also can be a object
+            rgb : function (circlePos, heartBeatCenter) {
+                var px = circlePos.x; // a point on boom circle
+                var py = circlePos.y;
+                var hbcx = heartBeatCenter.x;
+                var hbcy = heartBeatCenter.y;
+
+                var dis = Math.pow((px - hbcx), 2) + Math.pow((py - hbcy), 2);
+                var maxDis = 300 * 300;
+
+                var r = parseInt(255 * dis / maxDis);
+                // do some computation....
+                return {r:r,g:217,b:203};
+            }
         })
     }
 
     function random_move () {
         $.magicCanvas.draw({
-            lineLen: 18,
-            heartBeatCD: 3000,
-            heartBeatRange: 300,
             type:"random-move",
-            rgb: function (pos, center) {
-                return {r: 156, g: 217, b: 249};
-            } // also can be a object
+            rgb : function (circlePos) {
+                var px = circlePos.x;
+                var py = circlePos.y;
+                // do some computation....
+                return {r:parseInt(px % 255),g:parseInt(py % 255),b:203};
+            }
         })
     };
 </script>
