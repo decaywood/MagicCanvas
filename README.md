@@ -1,4 +1,4 @@
-#[demo](http://7xqo9j.com1.z0.glb.clouddn.com/MagicCanvas%2Findex.html)
+#[demo](http://7xqo9j.com1.z0.glb.clouddn.com/MagicCanvas%2Findex.html?v=0.1-beta)
 
 # Dependencies
 -
