@@ -15,22 +15,51 @@
             color: white;
             position: fixed;
         }
+
+        button {
+            font-size: large;
+        }
+        #btn1 {
+            position: fixed;
+            top: 1em;
+        }
+
+        #btn2 {
+            position: fixed;
+            top: 3em;
+        }
     </style>
 </head>
 <body>
 <h1>Magic Canvas<br/></h1>
 <h2><br/><br/>by decaywood </h2>
+<button id="btn2" type="button" onclick="heart_beat()">Heart Beat demo</button>
+<button id="btn1" type="button" onclick="random_move()">Random Move demo</button>
 <canvas id="reactive-bg-canvas"></canvas>
 </body>
 <script></script>
 <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/gsap/latest/TweenLite.min.js"></script>
 <script src="../magic-canvas.min.js"></script>
 <script>
-    window.onload = function () {
+    function heart_beat () {
         $.magicCanvas.draw({
             lineLen: 18,
             heartBeatCD: 3000,
             heartBeatRange: 300,
+            type:"heart-beat",
+            rgb: function (pos, center) {
+                return {r: 156, g: 217, b: 249};
+            } // also can be a object
+        })
+    }
+
+    function random_move () {
+        $.magicCanvas.draw({
+            lineLen: 18,
+            heartBeatCD: 3000,
+            heartBeatRange: 300,
+            type:"random-move",
             rgb: function (pos, center) {
                 return {r: 156, g: 217, b: 249};
             } // also can be a object

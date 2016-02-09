@@ -17,7 +17,8 @@ jQuery.magicCanvas = {
             lineLen: 30,
             heartBeatCD: 3000,
             heartBeatRange: 300,
-            rgb: {r: 156, g: 217, b: 249}
+            rgb: {r: 156, g: 217, b: 249},
+            type: "heart-beat"
         };
 
         var options = $.extend(defaults, opt);
@@ -49,7 +50,7 @@ jQuery.magicCanvas = {
             canvas.width = width;
             canvas.height = height;
 
-            target = {x: width / 2, y: height / 2};
+            target = {x: width / 2, y: height / 2, rx: width / 2, ry: height / 2};
 
             ctx = canvas.getContext("2d");
 
@@ -62,12 +63,27 @@ jQuery.magicCanvas = {
             if (!("ontouchstart" in window)) {
                 window.addEventListener("mousemove", mouseMove);
             }
+            window.addEventListener("scroll", scroll);
             window.addEventListener("resize", resize);
         }
 
+        function scroll() {
+            target.x = target.rx + document.body.scrollLeft + document.documentElement.scrollLeft;
+            target.y = target.ry + document.body.scrollTop + document.documentElement.scrollTop;
+        }
+
         function mouseMove(e) {
-            target.x = e.pageX;
-            target.y = e.pageY;
+
+            if (e.pageX || e.pageY) {
+                target.x = e.pageX;
+                target.y = e.pageY;
+            }
+            else if (e.clientX || e.clientY) {
+                target.x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                target.y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+            }
+            target.rx = e.clientX;
+            target.ry = e.clientY;
         }
 
 
@@ -82,16 +98,48 @@ jQuery.magicCanvas = {
         // animation
         function initAnimation() {
             animate();
-            setInterval(heartBeat, options.heartBeatCD);
+            if(options.type == "heart-beat") {
+                setInterval(heartBeat, options.heartBeatCD);
+            } else if (options.type == "random-move") {
+                for (var i = 0; i < points.length; i++) {
+                    shiftPoint(points[i]);
+                }
+            }
         }
 
         function animate() {
+
             ctx.clearRect(0, 0, width, height);
-            for (var i = 0; i < intersections.length; i++) {
-                var intersection = intersections[i];
-                if (intersection.circle.active > 0) {
-                    intersection.circle.active -= 0.012;
-                    intersection.circle.draw();
+
+            if(options.type == "heart-beat") {
+                for (var i = 0; i < intersections.length; i++) {
+                    var intersection = intersections[i];
+                    if (intersection.circle.active > 0) {
+                        intersection.circle.active -= 0.012;
+                        intersection.circle.draw();
+                    }
+                }
+            } else if (options.type == "random-move") {
+
+                var rp = getRelativeP();
+
+                for (var i = 0; i < points.length; i++) {
+                    // detect points in range
+                    if (Math.abs(getDistance(rp, points[i])) < 4000) {
+                        points[i].active = 0.3;
+                        points[i].circle.active = 0.6;
+                    } else if (Math.abs(getDistance(rp, points[i])) < 20000) {
+                        points[i].active = 0.1;
+                        points[i].circle.active = 0.3;
+                    } else if (Math.abs(getDistance(rp, points[i])) < 40000) {
+                        points[i].active = 0.02;
+                        points[i].circle.active = 0.1;
+                    } else {
+                        points[i].active = 0;
+                        points[i].circle.active = 0;
+                    }
+                    drawLines(points[i]);
+                    points[i].circle.draw();
                 }
             }
             requestAnimationFrame(animate);
@@ -131,6 +179,16 @@ jQuery.magicCanvas = {
                 }
             };
             if (draw) f();
+        }
+
+        function shiftPoint(p) {
+            TweenLite.to(p, 1 + Math.random(), {
+                x: p.originX - 50 + Math.random() * 100,
+                y: p.originY - 50 + Math.random() * 100,
+                onComplete: function () {
+                    shiftPoint(p);
+                }
+            });
         }
 
         function findClosest() {
@@ -232,54 +290,106 @@ jQuery.magicCanvas = {
 
         function createMap() {
 
-            var source = {x: width / 2, y: height / 2, closest: []};
-            var pointsQueue = [
-                getNeighborPoint(source, "left"),
-                getNeighborPoint(source, "rightTop"),
-                getNeighborPoint(source, "rightBottom")
-            ];
+            if(options.type == "random-move") {
 
-            // create points
-            points = [source];
+                points = [];
 
-            for (; pointsQueue.length > 0;) {
+                for (var x = 0; x < width; x = x + width / 20) {
+                    for (var y = 0; y < height; y = y + height / 20) {
+                        var px = x + Math.random() * width / 20;
+                        var py = y + Math.random() * height / 20;
+                        var p = {x: px, originX: px, y: py, originY: py};
+                        points.push(p);
+                    }
+                }
 
-                var p = pointsQueue.pop();
-                if (0 < p.x && p.x < width && 0 < p.y && p.y < height) {
-                    var same = false;
-                    for (var i = 0; i < points.length; i++) {
-                        var savedP = points[i];
-                        var distance = getDistance(p, savedP);
+                // for each point find the 5 closest points
+                for (var i = 0; i < points.length; i++) {
+                    var closest = [];
+                    var p1 = points[i];
+                    for (var j = 0; j < points.length; j++) {
+                        var p2 = points[j];
+                        if (!(p1 == p2)) {
+                            var placed = false;
+                            for (var k = 0; k < 5; k++) {
+                                if (!placed) {
+                                    if (closest[k] == undefined) {
+                                        closest[k] = p2;
+                                        placed = true;
+                                    }
+                                }
+                            }
 
-                        if (distance < Math.pow(options.lineLen, 2) * 0.1) {
-                            same = true;
-                            break;
+                            for (var k = 0; k < 5; k++) {
+                                if (!placed) {
+                                    if (getDistance(p1, p2) < getDistance(p1, closest[k])) {
+                                        closest[k] = p2;
+                                        placed = true;
+                                    }
+                                }
+                            }
                         }
                     }
-                    if (!same) {
-                        points.push(p);
-                        var type = p.type;
-                        if (type == "leftTop" || type == "leftBottom") {
-                            pointsQueue.unshift(getNeighborPoint(p, "left"));
-                            pointsQueue.unshift(getNeighborPoint(p, type == "leftTop" ? "rightTop" : "rightBottom"));
-                        } else if (type == "rightTop" || type == "rightBottom") {
-                            pointsQueue.unshift(getNeighborPoint(p, "right"));
-                            pointsQueue.unshift(getNeighborPoint(p, type == "rightTop" ? "leftTop" : "leftBottom"));
-                        } else if (type == "left") {
-                            pointsQueue.unshift(getNeighborPoint(p, "leftBottom"));
-                            pointsQueue.unshift(getNeighborPoint(p, "leftTop"));
-                        } else if (type == "right") {
-                            pointsQueue.unshift(getNeighborPoint(p, "rightBottom"));
-                            pointsQueue.unshift(getNeighborPoint(p, "rightTop"));
+                    p1.closest = closest;
+                }
+
+                // assign a circle to each point
+                for (var i = 0; i < points.length; i++) {
+                    points[i].circle = new Circle(points[i], 2 + Math.random() * 2, "rgba(255,255,255,0.3)");
+                }
+
+            } else if (options.type == "heart-beat") {
+
+                var source = {x: width / 2, y: height / 2, closest: []};
+                var pointsQueue = [
+                    getNeighborPoint(source, "left"),
+                    getNeighborPoint(source, "rightTop"),
+                    getNeighborPoint(source, "rightBottom")
+                ];
+
+                // create points
+                points = [source];
+
+                for (; pointsQueue.length > 0;) {
+
+                    var p = pointsQueue.pop();
+                    if (0 < p.x && p.x < width && 0 < p.y && p.y < height) {
+                        var same = false;
+                        for (var i = 0; i < points.length; i++) {
+                            var savedP = points[i];
+                            var distance = getDistance(p, savedP);
+
+                            if (distance < Math.pow(options.lineLen, 2) * 0.1) {
+                                same = true;
+                                break;
+                            }
+                        }
+                        if (!same) {
+                            points.push(p);
+                            var type = p.type;
+                            if (type == "leftTop" || type == "leftBottom") {
+                                pointsQueue.unshift(getNeighborPoint(p, "left"));
+                                pointsQueue.unshift(getNeighborPoint(p, type == "leftTop" ? "rightTop" : "rightBottom"));
+                            } else if (type == "rightTop" || type == "rightBottom") {
+                                pointsQueue.unshift(getNeighborPoint(p, "right"));
+                                pointsQueue.unshift(getNeighborPoint(p, type == "rightTop" ? "leftTop" : "leftBottom"));
+                            } else if (type == "left") {
+                                pointsQueue.unshift(getNeighborPoint(p, "leftBottom"));
+                                pointsQueue.unshift(getNeighborPoint(p, "leftTop"));
+                            } else if (type == "right") {
+                                pointsQueue.unshift(getNeighborPoint(p, "rightBottom"));
+                                pointsQueue.unshift(getNeighborPoint(p, "rightTop"));
+                            }
                         }
                     }
                 }
+
+                // assign a circle to each point
+                for (var i = 0; i < points.length; i++) {
+                    points[i].circle = new Circle(points[i], 2);
+                }
             }
 
-            // assign a circle to each point
-            for (var i = 0; i < points.length; i++) {
-                points[i].circle = new Circle(points[i], 2);
-            }
         }
 
         function getRelativeP() {
