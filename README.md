@@ -45,8 +45,9 @@ demo1: heart-beat effect
             var r = parseInt(255 * dis / maxDis);
             // do some computation....
             return {r:r,g:217,b:203};
-        }
+        },
     //  rgb: {r:156,g:217,b:249}; // parameter rgb can be a object as well
+        zIndex:-9999 // stack order
     })
 ```
 
@@ -60,7 +61,8 @@ demo2: random-move
                 var py = circlePos.y;
                 // do some computation....
                 return {r:parseInt(px % 255),g:parseInt(py % 255),b:203};
-            }
+            },
+            zIndex = -9999; // stack order
         })
 ```
 

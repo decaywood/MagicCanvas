@@ -18,7 +18,8 @@ jQuery.magicCanvas = {
             heartBeatCD: 3000,
             heartBeatRange: 300,
             rgb: {r: 156, g: 217, b: 249},
-            type: "heart-beat"
+            type: "heart-beat",
+            zIndex: -99999
         };
 
         var options = $.extend(defaults, opt);
@@ -43,7 +44,7 @@ jQuery.magicCanvas = {
             width = $(window).width();
             height = $(window).height();
             canvas.style.position = "fixed";
-            canvas.style.zIndex = -99999;
+            canvas.style.zIndex = options.zIndex;
             canvas.style.top = '0px';
             canvas.style.left = '0px';
 
