@@ -92,6 +92,7 @@ jQuery.magicCanvas = {
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
+            window.cancelAnimationFrame();
             initMap();
             initAnimation();
         }
