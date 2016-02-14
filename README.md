@@ -15,7 +15,7 @@ magic canvas depends on jQuery. Include them both in end of your HTML code (Twee
 
 the effect needs considerable performance. originally, it's running only on the browsers that requestAnimationFrame is built in. with [polyfill](https://remysharp.com/2010/10/08/what-is-a-polyfill), the early browser could work as well, but the best choice is update the browser to the latest version rather than use fall-back requestAnimationFrame.
 
-**browser supporting requestAnimationFrame**:
+**browsers supporting for requestAnimationFrame**:
 
 * chrome 31+
 * firefox 26+
