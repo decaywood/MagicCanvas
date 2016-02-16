@@ -1,4 +1,5 @@
 jQuery.magicCanvas = {
+    reqId: 0,
     draw: function (opt) {
 
         polyFill();
@@ -100,7 +101,12 @@ jQuery.magicCanvas = {
 
         // animation
         function initAnimation() {
+            if (this.reqId) {
+                polyFill(this.reqId);
+            }
+
             animate();
+            
             if(options.type == "heart-beat") {
                 setInterval(heartBeat, options.heartBeatCD);
             } else if (options.type == "random-move") {
@@ -145,7 +151,7 @@ jQuery.magicCanvas = {
                     points[i].circle.draw();
                 }
             }
-            requestAnimationFrame(animate);
+            this.reqId = requestAnimationFrame(animate);
         }
 
 
@@ -401,13 +407,14 @@ jQuery.magicCanvas = {
             return {x: x, y: y}
         }
 
-        function polyFill() {
+        function polyFill(curReq) {
             var lastTime = 0;
             var vendors = ['ms', 'moz', 'webkit', 'o'];
             for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
                 window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
                 window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
             }
+
             if (!window.requestAnimationFrame) window.requestAnimationFrame = function (callback, element) {
                 var currTime = new Date().getTime();
                 var timeToCall = Math.max(0, 16 - (currTime - lastTime));
@@ -420,6 +427,10 @@ jQuery.magicCanvas = {
             if (!window.cancelAnimationFrame) window.cancelAnimationFrame = function (id) {
                 clearTimeout(id);
             };
+
+            if (curReq) {
+                window.cancelAnimationFrame(curReq);
+            }
         }
     }
 
