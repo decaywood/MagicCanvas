@@ -94,7 +94,7 @@ jQuery.magicCanvas = {
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
-            window.cancelAnimationFrame();
+            if(this.reqId) window.cancelAnimationFrame(this.reqId);
             initMap();
             initAnimation();
         }
@@ -158,7 +158,7 @@ jQuery.magicCanvas = {
         function heartBeat() {
             var clsP = findClosest();
             var srcCircle = new Circle(clsP, 0);
-            var activeTime = options.heartBeatCD * 0.8;
+            var activeTime = 3000 * 0.8;
             var _frames = activeTime * 60 / 1000;
             var step = options.heartBeatRange / _frames;
             var sleep = activeTime / _frames;
