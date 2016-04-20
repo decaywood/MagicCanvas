@@ -1,6 +1,6 @@
-[demo1 -- heartbeat](http://7xqo9j.com1.z0.glb.clouddn.com/MagicCanvas%2Findex.html?v=0.4-beta)
+[demo1 -- heartbeat](http://7xqo9j.com1.z0.glb.clouddn.com/MagicCanvas%2Findex.html?v=0.5-beta)
 
-[demo2 -- random move](http://7xqo9j.com1.z0.glb.clouddn.com/MagicCanvas%2Findex2.html?v=0.4-beta)
+[demo2 -- random move](http://7xqo9j.com1.z0.glb.clouddn.com/MagicCanvas%2Findex2.html?v=0.5-beta)
 
 # Dependencies
 -
