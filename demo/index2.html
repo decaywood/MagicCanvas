@@ -31,28 +31,18 @@
 <script src="//cdn.bootcss.com/gsap/latest/TweenLite.min.js"></script>
 <script src="./magic-canvas.js"></script>
 <script>
-    function heart_beat () {
+    function random_move () {
         $.magicCanvas.draw({
-            lineLen: 18,
-            heartBeatCD: 3000,
-            heartBeatRange: 300,
-            type:"heart-beat",
-            rgb : function (circlePos, heartBeatCenter) {
-                var px = circlePos.x; // a point on boom circle
+            type:"random-move",
+            rgb : function (circlePos) {
+                var px = circlePos.x;
                 var py = circlePos.y;
-                var hbcx = heartBeatCenter.x;
-                var hbcy = heartBeatCenter.y;
-
-                var dis = Math.pow((px - hbcx), 2) + Math.pow((py - hbcy), 2);
-                var maxDis = 300 * 300;
-
-                var r = parseInt(255 * dis / maxDis);
                 // do some computation....
-                return {r:r,g:217,b:203};
+                return {r:parseInt(px % 255),g:parseInt(py % 255),b:203};
             }
         })
-    }
+    };
 
-    heart_beat();
+    random_move();
 </script>
 </html>

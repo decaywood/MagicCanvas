@@ -105,11 +105,11 @@ jQuery.magicCanvas = {
                 polyFill(this.reqId);
             }
 
-            animate();
-            
+
             if(options.type == "heart-beat") {
                 setInterval(heartBeat, options.heartBeatCD);
             } else if (options.type == "random-move") {
+                animate();
                 for (var i = 0; i < points.length; i++) {
                     shiftPoint(points[i]);
                 }
@@ -121,12 +121,17 @@ jQuery.magicCanvas = {
             ctx.clearRect(0, 0, width, height);
 
             if(options.type == "heart-beat") {
+                var count = 0;
                 for (var i = 0; i < intersections.length; i++) {
                     var intersection = intersections[i];
                     if (intersection.circle.active > 0) {
                         intersection.circle.active -= 0.012;
                         intersection.circle.draw();
-                    }
+                    } else count++;
+                }
+                if(intersections.length > 0 && count == intersections.length) {
+                    intersections = [];
+                    return;
                 }
             } else if (options.type == "random-move") {
 
@@ -156,6 +161,7 @@ jQuery.magicCanvas = {
 
 
         function heartBeat() {
+            animate();
             var clsP = findClosest();
             var srcCircle = new Circle(clsP, 0);
             var activeTime = 3000 * 0.8;
